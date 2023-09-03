@@ -1,0 +1,96 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+.Banner {
+  height: 400px;
+  position: relative;
+}
+
+.Banner .Media {
+  background-color: white;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.Banner .Media .MediaCaption {
+  text-overflow: ellipsis;
+  position: absolute;
+  bottom: 0;
+  padding: 15px;
+  background-color: black;
+  color: white;
+  opacity: 0.6;
+  width: 100%;
+  height: 10%;
+  font-size: 16px;
+  font-weight: 200;
+  transition: 300ms;
+  cursor: pointer;
+}
+
+.Banner .Media .MediaCaption:hover {
+  opacity: 0.8;
+}
+
+.Banner .Media:hover {
+  filter: brightness(115%);
+  transition: 300ms;
+  cursor: pointer;
+}
+
+.Banner .BannerGrid {
+  height: 100%;
+  position: relative;
+}
+
+.Banner .Content {
+  color: white;
+  background-color: #9c1914;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  padding: 30px;
+  transition: 300ms;
+}
+
+.Banner .Content:hover,
+.Banner .Content:active {
+  background-color: #8a1712;
+}
+
+.Banner .Content .Title {
+  font-size: 24px;
+  font-weight: 500;
+  color: white;
+}
+
+.Banner .Content .Caption {
+  margin-top: 10px;
+  font-size: 16px;
+  color: white;
+}
+
+.Banner .Content .ViewButton {
+  margin-top: 40px;
+  color: white;
+  font-size: 32px;
+  border: 3px solid white;
+  text-transform: capitalize;
+  transition: 200ms;
+}
+
+.Banner .Content .ViewButton:hover {
+  background-color: #ffffff;
+  color: #9c1914;
+}
