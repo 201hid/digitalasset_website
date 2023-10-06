@@ -1,163 +1,223 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-    AppBar, Box, Toolbar, Typography, InputBase,
-    MenuItem, Popper, Paper, ClickAwayListener, Select, IconButton, Menu
-} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import SearchIcon from '@mui/icons-material/Search';
+import Popover from '@mui/material/Popover';
 
-import digitalAssets from './data';
+function Navbar() {
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [anchorEl, setAnchorEl] = useState(null);
 
-export default function Navbar() {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [category, setCategory] = useState("");
-    const [suggestions, setSuggestions] = useState([]);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const open = Boolean(anchorEl);
-    const navigate = useNavigate();
-
-    const [profileAnchorEl, setProfileAnchorEl] = useState(null);
-    const profileOpen = Boolean(profileAnchorEl);
-
-    const handleProfileClick = (event) => {
-        setProfileAnchorEl(event.currentTarget);
-    };
-
-    const handleProfileClose = () => {
-        setProfileAnchorEl(null);
-    };
-
-    const handleInputChange = (e) => {
-        const value = e.target.value;
-        setSearchTerm(value);
-
-        const regex = value ? new RegExp(`^${value}`, 'i') : /.*/;
-
-        let filtered;
-        if (category) {
-            filtered = digitalAssets.filter(asset => asset.category === category && regex.test(asset.title));
-        } else {
-            filtered = digitalAssets.filter(asset => regex.test(asset.title));
+  useEffect(() => {
+    // Fetch products from the backend
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/products');
+        if (!response.ok) {
+          throw new Error(`Network response was not ok (Status: ${response.status})`);
         }
-
-        setSuggestions(filtered.slice(0, 5));
-
-        if (value) {
-            setAnchorEl(e.currentTarget);
-        } else {
-            setAnchorEl(null);
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Response is not JSON');
         }
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setProducts([]);
+      }
     };
 
-    const handleSuggestionClick = (title) => {
-        setSearchTerm(title);
-        setSuggestions([]);
-        navigate(`/search/${title}`);
-    };
+    fetchProducts();
+  }, []);
 
-    const handleShowAll = () => {
-        if (category) {
-            navigate(`/search/category/${category}`);
-        } else {
-            navigate(`/search/all`);
-        }
-    };
+  const handleInputChange = (event, newValue) => {
+    setSearchValue(newValue);
+  };
 
-    const handleSearchClick = () => {
-        if (searchTerm) {
-            navigate(`/search/${searchTerm}`);
-        } else if (category) {
-            navigate(`/search/category/${category}`);
-        } else {
-            navigate(`/search/all`);
-        }
-    };
+  const handleSearch = () => {
+    navigate(`/search/${searchValue}`);
+  };
 
-    const categories = Array.from(new Set(digitalAssets.map(asset => asset.category)));
+  const handleProfileClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const [typewriterIndex, setTypewriterIndex] = useState(0);
-    const placeholderText = "Type in your product or Choose your category and click search icon!!";
+  const handleCloseProfile = () => {
+    setAnchorEl(null);
+  };
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            setTypewriterIndex(prevIndex => (prevIndex + 1) % (placeholderText.length + 1));
-        }, 100);
+  return (
+    <div id="navbar" className="navbar-container">
+      <div className="navbar-left">
+        <IconButton color="inherit" onClick={() => navigate('/')}>
+          <HomeIcon />
+        </IconButton>
+      </div>
+      <div className="navbar-middle">
+        <Autocomplete
+          id="search-input"
+          options={products.map((product) => product.Product_Name)}
+          freeSolo
+          onInputChange={handleInputChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search for products..."
+              variant="outlined"
+              fullWidth
+              onKeyPress={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+              className="search-input"
+            />
+          )}
+        />
+        <IconButton color="inherit" onClick={handleSearch}>
+          <SearchIcon />
+        </IconButton>
+      </div>
+      <div className="navbar-right">
+        <IconButton color="inherit" onClick={handleProfileClick}>
+          <AccountCircleIcon />
+        </IconButton>
+        <IconButton color="inherit" onClick={() => navigate('/ordersummary')}>
+          <ShoppingCartIcon />
+        </IconButton>
+      </div>
 
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, []);
+      {/* Profile dropdown */}
+{/* Profile dropdown */}
+<Popover
+  open={Boolean(anchorEl)}
+  anchorEl={anchorEl}
+  onClose={handleCloseProfile}
+  anchorOrigin={{
+    vertical: 'bottom',
+    horizontal: 'right',
+  }}
+  transformOrigin={{
+    vertical: 'top',
+    horizontal: 'right',
+  }}
+  PaperProps={{
+    style: {
+      marginTop: '8px', // Adjust the value to control the vertical position
+    },
+  }}
+  className="profile-dropdown"
+>
+  <div>
+    <Link to="/profile/about" onClick={handleCloseProfile}>
+      About
+    </Link>
+    <Link to="/transaction" onClick={handleCloseProfile}>
+      Transactions
+    </Link>
+  </div>
+</Popover>
 
-    const currentPlaceholder = placeholderText.slice(0, typewriterIndex);
 
-    return (
-        <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <IconButton color="inherit" onClick={() => navigate('/')}>
-                        <HomeIcon />
-                    </IconButton>
-                    <Typography variant="h6" noWrap style={{ marginLeft: 10 }}>
-                        Digital Art Marketplace
-                    </Typography>
-                    <Select
-                        value={category}
-                        onChange={e => setCategory(e.target.value)}
-                        displayEmpty
-                        style={{ marginLeft: 10 }}
-                    >
-                        <MenuItem value="">
-                            <em>All Categories</em>
-                        </MenuItem>
-                        {categories.map(cat => (
-                            <MenuItem key={cat} value={cat}>
-                                {cat}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    <InputBase
-                        placeholder={currentPlaceholder}
-                        value={searchTerm}
-                        onChange={handleInputChange}
-                        style={{ marginLeft: 10, flex: 1 }}
-                        inputProps={{ 'aria-label': 'search' }}
-                    />
-                    <IconButton color="inherit" onClick={handleSearchClick} style={{ marginLeft: 10 }}>
-                        <SearchIcon />
-                    </IconButton>
-                    <IconButton color="inherit" onClick={handleProfileClick}>
-                        <AccountCircleIcon />
-                    </IconButton>
-                    <Menu
-                        anchorEl={profileAnchorEl}
-                        open={profileOpen}
-                        onClose={handleProfileClose}
-                    >
-                        <MenuItem onClick={() => navigate('/profile/about')}>About</MenuItem>
-                        <MenuItem onClick={() => navigate('/transaction')}>Transactions</MenuItem>
-                    </Menu>
-                    <IconButton color="inherit" onClick={() => navigate('/ordersummary')}>
-                        <ShoppingCartIcon />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
-            <Popper open={open} anchorEl={anchorEl} placement="bottom-start">
-                <ClickAwayListener onClickAway={() => setSuggestions([])}>
-                    <Paper>
-                        {suggestions.map(suggestion => (
-                            <MenuItem key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.title)}>
-                                {suggestion.title}
-                            </MenuItem>
-                        ))}
-                        {suggestions.length > 0 && (
-                            <MenuItem onClick={handleShowAll}>Show All</MenuItem>
-                        )}
-                    </Paper>
-                </ClickAwayListener>
-            </Popper>
-        </Box>
-    );
+      <Link to={`/search/${searchValue}`} onClick={handleSearch} className="search-link">
+        Search
+      </Link>
+    </div>
+  );
 }
+
+export default Navbar;
+
+
+
+
+
+// import React, { useState, useEffect } from 'react';
+// import { Link, useNavigate } from 'react-router-dom';
+// import TextField from '@mui/material/TextField';
+// import Autocomplete from '@mui/material/Autocomplete';
+
+// function Navbar() {
+//   const navigate = useNavigate();
+//   const [products, setProducts] = useState([]);
+//   const [searchValue, setSearchValue] = useState('');
+
+//   useEffect(() => {
+//     // Fetch products from the backend similar to what you did in HomePage.js
+//     // You can create a function to fetch products and call it here
+//     // For simplicity, let's assume you have a fetchProducts function that returns an array of products
+//     // Replace 'fetchProducts' with your actual data fetching logic
+//     const fetchProducts = async () => {
+//       try {
+//         const response = await fetch('http://localhost:8080/products');
+
+//         if (!response.ok) {
+//           throw new Error(`Network response was not ok (Status: ${response.status})`);
+//         }
+
+//         const contentType = response.headers.get('content-type');
+//         if (!contentType || !contentType.includes('application/json')) {
+//           throw new Error('Response is not JSON');
+//         }
+
+//         const data = await response.json();
+//         setProducts(data);
+//       } catch (error) {
+//         console.error('Error fetching products:', error);
+//         setProducts([]);
+//       }
+//     };
+
+//     fetchProducts();
+//   }, []);
+
+//   const handleInputChange = (event, newValue) => {
+//     setSearchValue(newValue);
+//   };
+
+//   const handleSearch = () => {
+//     navigate(`/search/${searchValue}`);
+//   };
+
+//   return (
+//     <div>
+//       <Autocomplete
+//         id="search-input"
+//         options={products.map((product) => product.Product_Name)}
+//         freeSolo
+//         onInputChange={handleInputChange}
+//         renderInput={(params) => (
+//           <TextField
+//             {...params}
+//             label="Search for products..."
+//             variant="outlined"
+//             fullWidth
+//             onKeyPress={(event) => {
+//               if (event.key === 'Enter') {
+//                 handleSearch();
+//               }
+//             }}
+//           />
+//         )}
+//       />
+//       <Link to={`/search/${searchValue}`} onClick={handleSearch}>
+//         Search
+//       </Link>
+//     </div>
+//   );
+// }
+
+// export default Navbar;
+
+
+
+
+

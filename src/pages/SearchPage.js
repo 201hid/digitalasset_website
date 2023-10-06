@@ -32,7 +32,7 @@ export default function SearchPage() {
         const productWithTitle = digitalAssets.find(asset => asset.title === title);
 
         if (!productWithTitle) {
-            products = []; // Product not found, set empty array - test git removed
+            products = []; // Product not found, set empty array
         } else {
             products = [productWithTitle];
         }
