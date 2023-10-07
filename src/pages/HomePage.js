@@ -101,8 +101,8 @@ const HomePage = () => {
       });
   }, []);
 
-  const handleItemClick = (title) => {
-    navigate(`/search/${title}`);
+  const handleItemClick = (Product_Name) => {
+    navigate(`/product/${Product_Name}`);
   };
 
   return (

@@ -7,6 +7,8 @@ import SearchPage from './pages/SearchPage';
 import ViewPage from './pages/ViewPage';
 import TransactionPage from './pages/TransactionPage';
 import OrderSummary from './pages/OrderSummary';
+import ProductDetails from './pages/ProductDetails';
+
 
 // Components
 import Navbar from './components/Navbar';
@@ -21,11 +23,13 @@ function App() {
       
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/search/:title" element={<SearchPage />} />
-        <Route path="/search/category/:category" element={<SearchPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/search/:category" element={<SearchPage />} />
         <Route path="/view" element={<ViewPage />} />
         <Route path="/transaction" element={<TransactionPage />} />
         <Route path="/ordersummary" element={<OrderSummary />} />
+        <Route path="/product/:productName" element={<ProductDetails />} />
+
         {/* Add any other routes here */}
       </Routes>
 
