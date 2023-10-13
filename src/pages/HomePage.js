@@ -10,18 +10,16 @@ const Image = styled('img')({
   height: 200,
   objectFit: 'cover',
 });
-//hello
 
 const ContentContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  marginTop: '10px',
   cursor: 'pointer',
+  paddingBottom: '10px',
 });
 
 const Title = styled('div')({
-  textDecoration: 'underline',
   color: '#007BFF',
   fontWeight: 'bold',
   '&:hover': {
@@ -31,15 +29,15 @@ const Title = styled('div')({
 
 const slideIn = keyframes` // Define keyframes for animation
   0% {
-    transform: translateX(-100%);
+    transform: translateX(0%);
   }
   100% {
-    transform: translateX(0%);
+    transform: translateX(100%);
   }
 `;
 
 const Heading = styled('h4')({
-  color: '#007BFF',
+  color: '#FFFFFF',
   position: 'relative',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -49,8 +47,8 @@ const Heading = styled('h4')({
   animation: `${slideIn} 15s linear infinite`,
 });
 
-const RedBackground = styled('div')({
-  background: '#B30000',
+const SlideInContainer = styled('div')({
+  background: '#354c7c',
   padding: '1px 0',
 });
 
@@ -108,15 +106,17 @@ const HomePage = () => {
   return (
     <div>
       <CarouselComponent />
-      <RedBackground>
+      <SlideInContainer>
         <Heading>Trending Products!!</Heading>
-      </RedBackground>
+      </SlideInContainer>
+      <br/>
       <Grid container spacing={3}>
         {products.map((product, index) => (
           <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
             <Item>
-              <Image src={product.Product_Images} alt={product.Product_Name} />
               <ContentContainer onClick={() => handleItemClick(product.Product_Name)}>
+              <Image src={product.Product_Images} alt={product.Product_Name} />
+                <br/> 
                 <Title>{product.Product_Name}</Title>
               </ContentContainer>
             </Item>
@@ -126,5 +126,5 @@ const HomePage = () => {
     </div>
   );
 };
-///hhhhh
+
 export default HomePage;

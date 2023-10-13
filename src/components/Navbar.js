@@ -8,6 +8,22 @@ import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Popover from '@mui/material/Popover';
+import { styled, alpha } from '@mui/material/styles';
+
+const CategorySelect = styled('select')(({ theme }) => ({
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  padding: theme.spacing(1),
+  color: 'inherit',
+  border: 'none',
+  '&:focus': {
+    outline: 'none',
+  },
+  height: '55px',
+}));
 
 function Navbar() {
   const navigate = useNavigate();
@@ -82,22 +98,15 @@ function Navbar() {
     <div id="navbar" className="navbar-container">
       <div className="navbar-left">
         <IconButton color="inherit" onClick={() => navigate('/')}>
-          <HomeIcon />
+          <HomeIcon/>
         </IconButton>
       </div>
+    
       <div className="navbar-middle">
-        <div className="category-dropdown">
-          <select
-            value={selectedCategory}
-            onChange={handleCategoryChange}
-            className="category-select"
-          >
-            <option value="All">All Categories</option>
-            <option value="Landscapes">Landscapes</option>
-            <option value="Cityscapes">Cityscapes</option>
-            <option value="Characters">Characters</option>
-          </select>
-        </div>
+        <IconButton color="inherit" onClick={handleSearch}>
+          <SearchIcon />
+        </IconButton>
+
         <Autocomplete
           id="search-input"
           options={filteredProducts.map((product) => product.Product_Name)}
@@ -123,10 +132,19 @@ function Navbar() {
             />
           )}
         />
-        <IconButton color="inherit" onClick={handleSearch}>
-          <SearchIcon />
-        </IconButton>
+      
+        <CategorySelect
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          className="category-select"
+        >
+          <option value="All">All Categories</option>
+          <option value="Landscapes">Landscapes</option>
+          <option value="Cityscapes">Cityscapes</option>
+          <option value="Characters">Characters</option>
+        </CategorySelect>
       </div>
+
       <div className="navbar-right">
         <IconButton color="inherit" onClick={handleProfileClick}>
           <AccountCircleIcon />
@@ -136,7 +154,6 @@ function Navbar() {
         </IconButton>
       </div>
 
-      {/* Profile dropdown */}
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}

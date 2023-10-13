@@ -33,6 +33,8 @@ function App() {
         {/* Add any other routes here */}
       </Routes>
 
+      <br/>
+      <br/>
       <Footer />
     </Router>
   );

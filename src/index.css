@@ -56,7 +56,7 @@ code {
 
 .Banner .Content {
   color: white;
-  background-color: #9c1914;
+  background-color: #354c7c;
   height: 100%;
   position: relative;
   cursor: pointer;
@@ -66,7 +66,7 @@ code {
 
 .Banner .Content:hover,
 .Banner .Content:active {
-  background-color: #8a1712;
+  background-color: #022954;
 }
 
 .Banner .Content .Title {
@@ -92,56 +92,14 @@ code {
 
 .Banner .Content .ViewButton:hover {
   background-color: #ffffff;
-  color: #9c1914;
+  color: #000000;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* Navbar container */
 .navbar-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333; /* Background color for the navbar */
+  background-color: #505a74; /* Background color for the navbar */
   padding: 10px 20px; /* Padding around the navbar content */
 }
 
@@ -152,15 +110,15 @@ code {
 
 /* Navbar middle section */
 .navbar-middle {
-  flex: 2;
   display: flex;
   align-items: center;
-}
-
-/* Search input */
-.search-input {
-  width: 300px; /* Fixed width for the search input */
-  margin-right: 10px; /* Spacing between search input and search icon */
+  position: relative;
+  border-radius: 4px; /* Use the actual value you need */
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: background-color 0.2s; /* Transition on hover */
+  margin-left: 0;
+  width: auto;
+  min-height: 60px;
 }
 
 /* Search icon button */
@@ -174,6 +132,7 @@ code {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  margin-right: 0px;
 }
 
 /* Profile dropdown */
@@ -237,4 +196,8 @@ code {
 
 .MuiAutocomplete-listbox::-webkit-scrollbar-thumb:hover {
   background-color: #555; /* Color of the scrollbar thumb on hover */
+}
+
+.MuiAutocomplete-root {
+  min-width: 500px;
 }

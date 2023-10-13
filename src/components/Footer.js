@@ -14,7 +14,7 @@ export default function Footer() {
   return (
     <Box
       sx={{
-        backgroundColor: defaultPrimaryColor,
+        backgroundColor: "#505a74",
         color: "white",
         p: 2
       }}
