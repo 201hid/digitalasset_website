@@ -9,15 +9,13 @@ import {
   Grid,
   Button,
   Paper,
-  IconButton,
-  Badge,
   Slider
 } from '@mui/material';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { toast, ToastContainer } from 'react-toastify'; // Import toast
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function SearchPage() {
   const { category } = useParams(); // Get the category from the URL parameter
-  const [cartQuantities, setCartQuantities] = useState({});
   const [products, setProducts] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 2]); // Default price range
 
@@ -54,18 +52,28 @@ export default function SearchPage() {
       (product.Price >= priceRange[0] && product.Price <= priceRange[1])
   );
 
-  const handleAddToCart = (productId) => {
-    setCartQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: (prevQuantities[productId] || 0) + 1
-    }));
-  };
+  const addToCart = async (productId, cartId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/Cart_Items/${cartId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ product_id: productId, quantity: 1 }), // Send the product ID in the request body
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Network response was not ok (Status: ${response.status})`);
+      }
+  
+      toast.success('Item added to the cart successfully', {
+        position: 'top-right',
+        autoClose: 3000, // Close the notification after 3 seconds
+      });
 
-  const handleRemoveFromCart = (productId) => {
-    setCartQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: Math.max(0, prevQuantities[productId] - 1)
-    }));
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+    }
   };
 
   return (
@@ -122,32 +130,12 @@ export default function SearchPage() {
                       marginTop: 'auto'
                     }}
                   >
-                    <IconButton
-                      aria-label="Add to Cart"
-                      onClick={() => handleAddToCart(product.id)}
-                    >
-                      <Badge
-                        badgeContent={cartQuantities[product.id] || 0}
-                        color="secondary"
-                      >
-                        <ShoppingCartIcon />
-                      </Badge>
-                    </IconButton>
-                    {cartQuantities[product.id] && cartQuantities[product.id] > 0 && (
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handleRemoveFromCart(product.id)}
-                      >
-                        Remove
-                      </Button>
-                    )}
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleAddToCart(product.id)}
+                      onClick={() => addToCart(product.Product_ID, '1')}
                     >
-                      Add to Cart
+                      Add to cart
                     </Button>
                   </div>
                 </CardContent>
@@ -156,6 +144,7 @@ export default function SearchPage() {
           ))
         )}
       </Grid>
+      <ToastContainer/>
     </Container>
   );
 }

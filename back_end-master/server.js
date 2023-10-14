@@ -35,11 +35,11 @@ app.get('/products', (req, res) => {
 });
 
 // Get product details by product name
-app.get('/products/:product_name', (req, res) => {
-  const productName = req.params.product_name;
+app.get('/products/:product_ID', (req, res) => {
+  const productID = req.params.product_ID;
 
   // Query your MySQL database to retrieve product details by product name
-  pool.query('SELECT * FROM Product_Catalog WHERE Product_Name = ?', [productName], (err, results) => {
+  pool.query('SELECT * FROM Product_Catalog WHERE Product_ID = ?', [[productID]], (err, results) => {
     if (err) {
       console.error(err);
       res.status(500).send('Error retrieving product details');
@@ -85,7 +85,7 @@ app.get('/Cart_Items/:cart_id', (req, res) => {
 app.post('/Cart_Items/:cart_id', (req, res) => {
   const cartId = req.params.cart_id;
   const { product_id, quantity } = req.body;
-
+  
   // You can include additional logic here, such as checking product availability and updating cart total.
   // For simplicity, this example just inserts a new cart item.
   pool.query('INSERT INTO Cart_Items (Cart_ID, Product_ID, Quantity) VALUES (?, ?, ?)', [cartId, product_id, quantity], (err, results) => {
