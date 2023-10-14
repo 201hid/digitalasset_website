@@ -199,5 +199,10 @@ code {
 }
 
 .MuiAutocomplete-root {
-  min-width: 500px;
+  min-width: 450px;
 }
+
+.aboutButton {
+  width: 85%;
+}
+

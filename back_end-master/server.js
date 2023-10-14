@@ -34,6 +34,25 @@ app.get('/products', (req, res) => {
   });
 });
 
+// Get product details by product name
+app.get('/products/:product_name', (req, res) => {
+  const productName = req.params.product_name;
+
+  // Query your MySQL database to retrieve product details by product name
+  pool.query('SELECT * FROM Product_Catalog WHERE Product_Name = ?', [productName], (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error retrieving product details');
+    } else if (results.length === 0) {
+      // Handle the case where the product is not found
+      res.status(404).send('Product not found');
+    } else {
+      res.setHeader('Content-Type', 'application/json');
+      res.json(results[0]); // Assuming the query returns a single product
+    }
+  });
+});
+
 // Create a new shopping cart
 app.post('/Shopping_Cart', (req, res) => {
   // You can include additional logic here, such as setting cart details.

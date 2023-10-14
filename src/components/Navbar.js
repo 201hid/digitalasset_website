@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import IconButton from '@mui/material/IconButton';
@@ -9,6 +9,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Popover from '@mui/material/Popover';
 import { styled, alpha } from '@mui/material/styles';
+import { Button } from '@mui/material';
 
 const CategorySelect = styled('select')(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
@@ -31,6 +32,8 @@ function Navbar() {
   const [searchValue, setSearchValue] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All'); // Default category is 'All'
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   useEffect(() => {
     // Fetch products from the backend
@@ -155,7 +158,8 @@ function Navbar() {
       </div>
 
       <Popover
-        open={Boolean(anchorEl)}
+        id={id}
+        open={open}
         anchorEl={anchorEl}
         onClose={handleCloseProfile}
         anchorOrigin={{
@@ -166,20 +170,17 @@ function Navbar() {
           vertical: 'top',
           horizontal: 'right',
         }}
-        PaperProps={{
-          style: {
-            marginTop: '8px', // Adjust the value to control the vertical position
-          },
-        }}
-        className="profile-dropdown"
       >
-        <div>
-          <Link to="/profile/about" onClick={handleCloseProfile}>
-            About
-          </Link>
-          <Link to="/transaction" onClick={handleCloseProfile}>
-            Transactions
-          </Link>
+        <div className='profileDropdown'>
+            <Button className='aboutButton'>About</Button>
+          <div className='transactionButton'>
+            <Button
+              onClick={() => {
+              navigate('/transaction');
+            }}>
+              Transactions
+            </Button>
+          </div>
         </div>
       </Popover>
     </div>

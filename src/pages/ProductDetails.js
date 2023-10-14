@@ -1,49 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+async function fetchProductDetails(productName) {
+  try {
+    const encodedProductName = encodeURIComponent(productName);
+    const response = await fetch(`http://localhost:8080/products/${encodedProductName}`);
+    
+    if (!response.ok) {
+      throw new Error(`Network response was not ok (Status: ${response.status})`);
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Response is not JSON');
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching product details:', error);
+    return null;
+  }
+}
+
+
 const ProductDetails = () => {
   const { productName } = useParams();
-  const [product, setProduct] = useState(null);
+  const [productDetails, setProductDetails] = useState(null);
 
   useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        // Use the productName directly in the URL since it's already in the desired format
-        const response = await fetch(`http://localhost:8080/product/${productName}`);
-
-        if (!response.ok) {
-          throw new Error(`Network response was not ok (Status: ${response.status})`);
-        }
-
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Response is not JSON');
-        }
-
-        const data = await response.json();
-        setProduct(data);
-      } catch (error) {
-        console.error('Error fetching product details:', error);
-      }
-    };
-
-    fetchProductDetails();
+    fetchProductDetails(productName)
+      .then((data) => {
+        setProductDetails(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching product details', error);
+      });
   }, [productName]);
+
+  if(!productDetails) {
+    return <div>Loading...</div>
+  }
 
   return (
     <div>
-      {product ? (
-        <div>
-          <h2>{product.Product_Name}</h2>
-          <p>Description: {product.Description}</p>
-          <p>Price: ${product.Price}</p>
-          <p>Category: {product.Category}</p>
-          <p>Artist: {product.Artist}</p>
-          <img src={product.Product_Images} alt={product.Product_Name} />
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
+      <h2>{productDetails.Product_Name}</h2>
+      <p>Description: {productDetails.Description}</p>
+      <p>Price: ${productDetails.Price}</p>
+      <p>Category: {productDetails.Category}</p>
+      <p>Artist: {productDetails.Artist}</p>
+      <img src={productDetails.Product_Images} alt={productDetails.Product_Name} />
     </div>
   );
 };
