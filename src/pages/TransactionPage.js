@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -8,8 +8,6 @@ import {
   Grid,
   List,
   ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
   TextField,
   FormControl,
   FormControlLabel,
@@ -17,7 +15,7 @@ import {
   MenuItem,
   Select,
 } from '@mui/material';
-import transactionData from '../components/transactiondata';
+import axios from 'axios';
 
 const statusColors = {
   Completed: 'success',
@@ -30,6 +28,30 @@ const TransectionPage = () => {
   const [endDate, setEndDate] = useState(null);
   const [statusFilter, setStatusFilter] = useState(false);
   const [sortBy, setSortBy] = useState('');
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/orders');
+        const transactionData = response.data;
+
+        for (const transaction of transactionData) {
+          // Fetch order total from another API endpoint
+          const totalResponse = await axios.get(`http://localhost:8080/Shopping_Cart/${transaction.Cart_ID}`);
+          if (totalResponse.data && totalResponse.data[0] && totalResponse.data[0].Total) {
+            transaction.Total = totalResponse.data[0].Total;
+          }
+        }
+
+        setTransactions(transactionData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   const handleStartDateChange = (event) => {
     setStartDate(event.target.value);
@@ -47,18 +69,18 @@ const TransectionPage = () => {
     setSortBy(event.target.value);
   };
 
-  const filteredTransactions = transactionData.filter((transaction) => {
+  const filteredTransactions = transactions.filter((transaction) => {
     if (!startDate || !endDate) {
-      return true; // If no dates are selected, show all transactions
+      return true;
     }
 
-    const transactionDate = new Date(transaction.purchaseDate);
+    const transactionDate = new Date(transaction.Order_DateTime);
     return transactionDate >= new Date(startDate) && transactionDate <= new Date(endDate);
-  }).filter((transaction) => !statusFilter || transaction.orderStatus === 'Completed');
+  }).filter((transaction) => !statusFilter || transaction.Order_Status === 'Completed');
 
   const sortedTransactions = sortBy
     ? [...filteredTransactions].sort((a, b) =>
-        sortBy === 'lowToHigh' ? a.totalPrice - b.totalPrice : b.totalPrice - a.totalPrice
+        sortBy === 'lowToHigh' ? a.Total - b.Total : b.Total - a.Total
       )
     : filteredTransactions;
 
@@ -113,7 +135,7 @@ const TransectionPage = () => {
         <Grid item xs={12} md={9}>
           <List>
             {sortedTransactions.map((transaction) => (
-              <ListItem key={transaction.id}>
+              <ListItem key={transaction.Order_ID}>
                 <Card variant="outlined" sx={{ width: '100%' }}>
                   <CardContent>
                     <Grid container spacing={2}>
@@ -122,7 +144,7 @@ const TransectionPage = () => {
                           Hash Value
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {transaction.hashNumber}
+                          {transaction.Order_ID}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={3}>
@@ -130,7 +152,7 @@ const TransectionPage = () => {
                           Total Price
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          ${transaction.totalPrice.toFixed(2)}
+                          {transaction.Total}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={3}>
@@ -138,7 +160,7 @@ const TransectionPage = () => {
                           Purchase Date
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {transaction.purchaseDate.toLocaleString()}
+                          {transaction.Order_DateTime}
                         </Typography>
                       </Grid>
                       <Grid item xs={12} sm={3}>
@@ -146,29 +168,11 @@ const TransectionPage = () => {
                           Status
                         </Typography>
                         <Chip
-                          label={transaction.orderStatus}
-                          color={statusColors[transaction.orderStatus]}
+                          label={transaction.Order_Status}
+                          color={statusColors[transaction.Order_Status]}
                         />
                       </Grid>
                     </Grid>
-                    <Typography variant="h6" sx={{ marginTop: 2 }}>
-                      Items
-                    </Typography>
-                    <List>
-                      {transaction.items.map((item, index) => (
-                        <ListItem key={index}>
-                          <ListItemText
-                            primary={item.itemName}
-                            secondary={`Quantity: ${item.quantity}`}
-                          />
-                          <ListItemSecondaryAction>
-                            <Typography variant="body2">
-                              ${item.price.toFixed(2)}
-                            </Typography>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      ))}
-                    </List>
                   </CardContent>
                 </Card>
               </ListItem>
