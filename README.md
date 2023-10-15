@@ -1,3 +1,16 @@
+## Database Setup
+
+To set up the database for this project, follow these steps:
+
+1. Make sure you have MySQL installed on your machine. If not, you can download it from [MySQL Downloads](https://dev.mysql.com/downloads/installer/).
+
+2. Open a terminal or MySQL command prompt and navigate to the project directory.
+
+3. Run the following command to create and populate the database:
+   
+   ```bash
+   mysql -u root -p < database/script.sql
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

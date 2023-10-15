@@ -1,8 +1,13 @@
+const { Web3 } = require('web3');
+const web3 = new Web3('HTTP://127.0.0.1:7545'); // Change the URL as per your blockchain setup
+const contractAddress = '0x5467f5F6cE7F540B01361fB228B171743D0dC15f'; // Replace with the deployed contract address
+const accountaddress = '0x1dcAa4Ae4114e137e14de4082963799eDf7Ec5dD'; // Replace with the account address
+const abi = require('./MyContractAbi.json');
+
 const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 const cors = require('cors'); // Import the cors package
-
 
 const app = express();
 app.use(bodyParser.json());
