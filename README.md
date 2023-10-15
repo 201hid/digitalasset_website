@@ -11,6 +11,14 @@ To set up the database for this project, follow these steps:
    ```bash
    mysql -u root -p < database/script.sql
 
+## Smart contract setup
+
+To set up the smart contract and local blockchain:
+
+1. Navigate to /back_end-master/server.js and modify lines 2-4.
+
+2. The required setup for solidity is included in the package.json.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -18,6 +26,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm install`
+
+This installs all the dependencies this web application uses. Run this command prior to doing anything else.
 
 ### `npm start`
 
