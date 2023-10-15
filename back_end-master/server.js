@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: 'Toyotaecho3+', // Change to your database password
+  password: '123123', // Change to your database password
   database: 'ecommerce', // Change to your database name
   waitForConnections: true,
   connectionLimit: 10,
@@ -177,12 +177,13 @@ app.get('/orders', (req, res) => {
     }
   });
 });
+
 app.put('/Shopping_Cart/:cart_id', (req, res) => {
   const cartId = req.params.cart_id;
-  const { Status } = req.body; // Accept 'Status' in the request body
+  const { Status, Total } = req.body; // Accept 'Status' in the request body
 
   // Update the cart status in your database
-  pool.query('UPDATE Shopping_Cart SET Status = ? WHERE Cart_ID = ?', [Status, cartId], (err, results) => {
+  pool.query('UPDATE Shopping_Cart SET Status = ?, Total = ? WHERE Cart_ID = ?', [Status, Total, cartId], (err, results) => {
     if (err) {
       console.error(err);
       res.status(500).send('Error updating cart status');

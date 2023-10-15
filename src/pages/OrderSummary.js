@@ -115,7 +115,7 @@ const CartPage = () => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ Status: 'complete' }),
+          body: JSON.stringify({ Status: 'complete', Total: totalPrice.toString()}),
         });
   
         if (!updateCartResponse.ok) {
