@@ -49,9 +49,31 @@ const CartPage = () => {
   };
   
 
-  const clearCart = () => {
-    setFetchedCartItems([]);
+  const clearCart = async () => {
+    try {
+      const cartId = await getIncompleteCartId();
+  
+      if (cartId) {
+        // Loop through all items in the cart and remove them one by one
+        for (const item of fetchedCartItems) {
+          const response = await fetch(`http://localhost:8080/Cart_Items/${cartId}/${item.Product_ID}`, {
+            method: 'DELETE',
+          });
+  
+          if (!response.ok) {
+            throw new Error(`Network response was not ok (Status: ${response.status})`);
+          }
+        }
+  
+        // Update the front-end state to reflect the removal of all items
+        setFetchedCartItems([]);
+      }
+    } catch (error) {
+      console.error('Error clearing the cart:', error);
+      // You may want to display an error message to the user if the delete requests fail
+    }
   };
+  
 
   const calculateTotalPrice = () => {
     return fetchedCartItems.reduce((total, item) => total + parseFloat(item.Price) * item.Quantity, 0).toFixed(2);
@@ -247,30 +269,28 @@ useEffect(() => {
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={8}>
-          {fetchedCartItems.length === 0 ? (
-            <p>No items in the cart.</p>
-          ) : (
-            <ul>
-              {fetchedCartItems.map((product) => (
-                <Paper key={product.Product_ID} elevation={3} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
-                  <IconButton onClick={() => removeItem(product.Product_ID)}>
-                    <Delete />
-                  </IconButton>
-                  <div sx={{ width: 60, height: 50, overflow: 'hidden', marginRight: 16 }}>
-                    <img src={product.Product_Images} alt={product.Product_Name} style={{ width: 60, height: 50, objectFit: 'cover' }} />
-                  </div>
-                  <Typography>{product.Product_Name}</Typography>
-                  <IconButton onClick={() => decreaseQuantity(product.Product_ID)}>
-                    <RemoveCircleOutline />
-                  </IconButton>
-                  <Typography>{product.Quantity}</Typography>
-                  <IconButton onClick={() => increaseQuantity(product.Product_ID)}>
-                    <AddCircleOutline />
-                  </IconButton>
-                </Paper>
-              ))}
-            </ul>
-          )}
+        {fetchedCartItems.length === 0 ? (
+        <p>No items in the cart.</p>
+      ) : (
+        <ul>
+          {fetchedCartItems.map((product) => (
+            <Paper key={product.Product_ID} elevation={3} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
+              <IconButton onClick={() => removeItem(product.Product_ID)}>
+                <Delete />
+              </IconButton>
+              <div sx={{ width: 60, height: 50, overflow: 'hidden', marginRight: 16 }}>
+                <img src={product.Product_Images} alt={product.Product_Name} style={{ width: 60, height: 50, objectFit: 'cover' }} />
+              </div>
+              <div>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{product.Product_Name}</Typography>
+                <Typography sx={{ color: 'darkgreen' }}>Quantity: {product.Quantity}</Typography>
+              </div>
+            </Paper>
+          ))}
+        </ul>
+      )}
+
+
         </Grid>
         <Grid item xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 2 }}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -7,17 +7,12 @@ import {
   Typography,
   Container,
   Grid,
-  Button,
   Paper,
-  IconButton,
-  Badge,
   Slider
 } from '@mui/material';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 
 export default function SearchPage() {
   const { category } = useParams(); // Get the category from the URL parameter
-  const [cartQuantities, setCartQuantities] = useState({});
   const [products, setProducts] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 2]); // Default price range
 
@@ -53,20 +48,6 @@ export default function SearchPage() {
       (!category || product.Category === category) && // Filter by category when selected
       (product.Price >= priceRange[0] && product.Price <= priceRange[1])
   );
-
-  const handleAddToCart = (productId) => {
-    setCartQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: (prevQuantities[productId] || 0) + 1
-    }));
-  };
-
-  const handleRemoveFromCart = (productId) => {
-    setCartQuantities((prevQuantities) => ({
-      ...prevQuantities,
-      [productId]: Math.max(0, prevQuantities[productId] - 1)
-    }));
-  };
 
   return (
     <Container>
@@ -104,7 +85,9 @@ export default function SearchPage() {
                 />
                 <CardContent>
                   <Typography variant="h5" component="div" gutterBottom>
-                    {product.Product_Name}
+                    <Link to={`http://localhost:3000/product/${encodeURIComponent(product.Product_Name)}`}>
+                      {product.Product_Name}
+                    </Link>
                   </Typography>
                   <Typography variant="body2" color="textSecondary" gutterBottom>
                     {product.Description}
@@ -115,41 +98,6 @@ export default function SearchPage() {
                   <Typography variant="h6" color="primary" gutterBottom>
                     Price: ${product.Price}
                   </Typography>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginTop: 'auto'
-                    }}
-                  >
-                    <IconButton
-                      aria-label="Add to Cart"
-                      onClick={() => handleAddToCart(product.id)}
-                    >
-                      <Badge
-                        badgeContent={cartQuantities[product.id] || 0}
-                        color="secondary"
-                      >
-                        <ShoppingCartIcon />
-                      </Badge>
-                    </IconButton>
-                    {cartQuantities[product.id] && cartQuantities[product.id] > 0 && (
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => handleRemoveFromCart(product.id)}
-                      >
-                        Remove
-                      </Button>
-                    )}
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleAddToCart(product.id)}
-                    >
-                      Add to Cart
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             </Grid>

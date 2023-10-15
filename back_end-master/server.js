@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '123123', // Change to your database password
+  password: 'Toyotaecho3+', // Change to your database password
   database: 'ecommerce', // Change to your database name
   waitForConnections: true,
   connectionLimit: 10,
